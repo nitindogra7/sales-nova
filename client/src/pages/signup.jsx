@@ -1,55 +1,43 @@
+import signupImage from "../assets/signupImg.png";
 import AuthContainer from "../components/authContainer";
-import GlowBackground from "../components/glowBackground";
+import { useNavigate } from "react-router-dom";
 import InteractiveGridBackground from "../components/lightswind/interactive-grid-background.tsx";
 import { signup } from "../apis/auth.apis.js";
 
 export default function Signup() {
- async function onSubmitAction(input) {
-  try {
-    const res = await signup(input);
-    console.log(res);
-  } catch (err) {
-    console.log(err.message || err);
+  const navigate = useNavigate();
+  async function onSubmitAction(input) {
+    try {
+      const res = await signup(input);
+      localStorage.setItem("accessAccId", res.otpId);
+      navigate("/verify-otp");
+    } catch (err) {
+      console.log(err.message || err);
+    }
   }
-}
   return (
     <div className="h-dvh w-full overflow-hidden bg-black text-white flex items-center justify-center">
-      <InteractiveGridBackground
-        className="z-10"
-        trailLength={0}
-        idleRandomCount={0}
-        gridSize={40}
-      />
-      <GlowBackground />
+      <div className="h-full w-[80%] hidden md:flex items-center justify-center relative p-5">
+         <img
+         className="h-full w-full object-cover"
+         src={signupImage} alt="Signup Illustration" />
+      </div>
+      <div className="h-full w-[45%] md:pr-30 flex items-center justify-center ">
       <AuthContainer
         heading={"Signup"}
-        defineText={"welcome to "}
-        highlightText={"Market Place"}
-        buttonName={"Signup"}
+        defineText={"Welcome to "}  
+        highlightText={" Sales Nova"}
+        buttonName={"Sign Up with Email"}
         anchorTagName={"Login"}
         fields={[
-          {
-            name: "username",
-            label: "username",
-            type: "text",
-            placeholder: "Choose your username",
-          },
-          {
-            name: "email",
-            label: "Email",
-            type: "email",
-            placeholder: "Enter your email",
-          },
-          {
-            name: "password",
-            label: "Password",
-            type: "password",
-            placeholder: "Create your password",
-          },
-        
+          { name: "username", label: "Username", type: "text", placeholder: "Choose your username" },
+          { name: "companyName", label: "Company Name", type: "text", placeholder: "Enter your company name" },
+          { name: "email", label: "Email", type: "email", placeholder: "name@example.com" },
+          { name: "password", label: "Password", type: "password", placeholder: "Create your password" },
         ]}
-          onSubmitAction = {onSubmitAction}
+        onSubmitAction={onSubmitAction}
       />
+      </div>
     </div>
   );
 }

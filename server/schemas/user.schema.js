@@ -3,6 +3,7 @@ import { z } from 'zod';
 // for register
 export const registerSchema = z.object({
   username: z.string({ required_error: 'username required' }).min(3),
+  companyName: z.string({ required_error: 'company name required' }).min(2),
   email: z.string({ required_error: 'email required' }).email(),
   password: z
     .string({ required_error: 'password required' })

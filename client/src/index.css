@@ -1,8 +1,15 @@
-@import 'tailwindcss';
-@theme{
-  --color-primary : #090a0f;
-  --color-gray : #262827;
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #090a0f;
+  --color-gray: #262827;
+
+  --font-inter: "Inter", sans-serif;
+  --font-serif: "Instrument Serif", serif;
+  --font-manrope: "Manrope", sans-serif;
 }
-html,body{
+
+html,
+body {
   background-color: black;
 }
