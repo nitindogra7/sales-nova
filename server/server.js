@@ -5,6 +5,7 @@ import SingUpRoute from './routes/auth.routes.js';
 import User from './models/user.model.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import dashboardRoute from './routes/dashboard.routes.js';
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ app.use(express.json({ extend: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:5173','http://192.168.1.5:5173/'],
+    origin: ['http://localhost:5173', 'http://192.168.1.5:5173/'],
     credentials: true,
   })
 );
@@ -26,8 +27,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', SingUpRoute);
+app.use('/api', dashboardRoute);
 
 app.listen(
-  process.env.PORT || 3000,
-  console.log(`server running on ${process.env.PORT} || 3000 `)
+  process.env.PORT || 5000,
+  console.log(`server running on ${process.env.PORT} `)
 );

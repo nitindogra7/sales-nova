@@ -8,7 +8,7 @@ export default function Login() {
       <AuthContainer
         heading={"Login"}
         defineText={"Login to your "}
-        highlightText={"Aceternity UI Pro account"}
+        highlightText={" Sales Nova account"}
         buttonName={"Sign In with Email"}
         anchorTagName={"Signup"}
         fields={[

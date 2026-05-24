@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { verifyOtp , resendOtp} from "../apis/auth.apis";
-
+import { useNavigate } from "react-router-dom";
 export default function OTPVerification() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRef = useRef([]);
@@ -15,13 +15,22 @@ export default function OTPVerification() {
       inputRef.current[index + 1]?.focus();
     }
   }
-
-  function onSubmit(e) {
-    e.preventDefault();
+  const Navigate = useNavigate();
+  async function onSubmit(e) {
+    try{
+      e.preventDefault();
     let stringOtp = [...otp].join("");
     const id = localStorage.getItem("accessAccId");
-    verifyOtp({ stringOtp, id });
+    const res = await verifyOtp({ stringOtp, id });
+    console.log(res.userData);
+    localStorage.setItem("accessToken", res.userData.accessToken);
     setOtp(["", "", "", "", "", ""]);
+    localStorage.removeItem("accessAccId");
+    Navigate("/dashboard")
+    }catch(err){
+      console.error(err.message || err)
+    }
+    
   }
 
   function moveBack(e, index) {

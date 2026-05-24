@@ -101,11 +101,12 @@ export const verifyOtp = async (req, res) => {
       username: user.username,
       role: 'owner',
     });
-    const accessToken = generateAccessToken(createUser._id);
-    const refreshToken = generateRefreshToken(createUser._id);
+    const accessToken = generateAccessToken(createUser._id, createUser.role);
+    const refreshToken = generateRefreshToken(createUser._id, createUser.role);
 
     const details = {
       username: user.username,
+      companyName: user.companyName,
       email: user.email,
       accessToken,
     };
@@ -117,13 +118,15 @@ export const verifyOtp = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     };
 
-    res.cookie('market_rfs_tkn', refreshToken, options);
+    res.cookie('salesNova_rfs_tkn', refreshToken, options);
     createUser.refreshToken = hashToken(refreshToken);
     await createUser.save();
 
-    res
-      .status(201)
-      .json({ success: true, message: 'user created successfully' });
+    res.status(201).json({
+      success: true,
+      message: 'user created successfully',
+      userData: details,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: 'internal server error' });
@@ -162,3 +165,4 @@ export const sendOtp = async (req, res) => {
     console.log(err);
   }
 };
+5;
