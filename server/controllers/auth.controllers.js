@@ -1,5 +1,6 @@
 import User from '../models/user.model.js';
 import { otpSchema } from '../schemas/otp.schema.js';
+import jwt from 'jsonwebtoken';
 import { registerSchema } from '../schemas/user.schema.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
@@ -11,6 +12,14 @@ import generateOtp from '../services/otp.services.js';
 const hashToken = (token) => {
   return crypto.createHash('sha256').update(token).digest('hex');
 };
+
+const refreshCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 export const signUpController = async (req, res) => {
   try {
     const result = registerSchema.safeParse(req.body);
@@ -111,14 +120,7 @@ export const verifyOtp = async (req, res) => {
       accessToken,
     };
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    };
-
-    res.cookie('salesNova_rfs_tkn', refreshToken, options);
+    res.cookie('salesNova_rfs_tkn', refreshToken, refreshCookieOptions);
     createUser.refreshToken = hashToken(refreshToken);
     await createUser.save();
 
@@ -165,4 +167,54 @@ export const sendOtp = async (req, res) => {
     console.log(err);
   }
 };
-5;
+
+export const refreshTokenController = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.salesNova_rfs_tkn;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: 'Refresh token not found',
+      });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    if (user.refreshToken !== hashToken(refreshToken)) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid refresh token',
+      });
+    }
+
+    const newAccessToken = generateAccessToken(user._id, user.role);
+    const newRefreshToken = generateRefreshToken(user._id, user.role);
+
+    res.cookie('salesNova_rfs_tkn', newRefreshToken, refreshCookieOptions);
+
+    user.refreshToken = hashToken(newRefreshToken);
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Token refreshed successfully',
+      accessToken: newAccessToken,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({
+      success: false,
+      message: 'Refresh token expired or invalid',
+    });
+  }
+};

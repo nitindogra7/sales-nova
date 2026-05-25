@@ -7,21 +7,30 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (res) => res,
+  async (error) => {
+    const req = error.config;
 
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("accessToken");
-      window.location.href = "/login";
+    if (error.response?.status === 401 && !req._retry) {
+      req._retry = true;
+
+      try {
+        const res = await api.post("/auth/refresh-token");
+        const token = res.data.accessToken;
+
+        localStorage.setItem("accessToken", token);
+        req.headers.Authorization = `Bearer ${token}`;
+
+        return api(req);
+      } catch (err) {
+        localStorage.removeItem("accessToken");
+        return Promise.reject(err);
+      }
     }
 
     return Promise.reject(error);
