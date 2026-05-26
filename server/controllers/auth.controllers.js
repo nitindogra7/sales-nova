@@ -4,10 +4,13 @@ import jwt from 'jsonwebtoken';
 import { registerSchema } from '../schemas/user.schema.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import { findUserByEmailOrUsername } from '../services/auth.services.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import sendEmail from '../services/nodemailer.services.js';
 import Otp from '../models/otp.model.js';
 import generateOtp from '../services/otp.services.js';
+
+// Helper functions
 
 const hashToken = (token) => {
   return crypto.createHash('sha256').update(token).digest('hex');
@@ -20,17 +23,18 @@ const refreshCookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
+// Controllers
+
 export const signUpController = async (req, res) => {
   try {
     const result = registerSchema.safeParse(req.body);
-
     if (!result.success) {
       const error = result.error.issues.map((err) => err.message);
       return res.status(400).json({ success: false, message: error });
     }
 
     const { email, username, password } = result.data;
-    const userExists = await User.findOne({ $or: [{ email }, { username }] });
+    const userExists = await findUserByEmailOrUsername(email, username);
 
     if (userExists)
       return res.status(409).json({
