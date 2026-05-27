@@ -7,7 +7,7 @@ const workspaceSchema = mongoose.Schema(
       required: true,
       ref: 'User',
     },
-    apiKeys: {
+    apiKey: {
       type: String,
       default: null,
     },

@@ -24,13 +24,20 @@ export default function Workspace() {
   }
 
   return (
-    <div className="h-screen w-full flex">
-      <Nav response={data} />
+    <div className="h-auto w-full flex">
+      <div className="">
+        <aside className="fixed top-0 left-0 h-screen w-[280px]">
+           <Nav response={data} />
+        </aside>
 
-      <Routes>
+        <main className="ml-[280px]">
+           <Routes>
         <Route index element={<OwnerDashboard response={data} />} />
         <Route path="generate-api" element={<GenerateApi response={data} />} />
       </Routes>
+        </main>
+       
+      </div>
     </div>
   );
 }

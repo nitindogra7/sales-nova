@@ -9,13 +9,14 @@ import {
   User,
   LogOut,
   Globe,
+   UserPlus 
 } from "lucide-react";
 
 export default function Nav({response}) {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <aside className="w-[280px] min-h-screen bg-black border-r border-neutral-900 text-white px-7 py-10 flex flex-col justify-between">
+    <aside className="w-[280px] h-screen bg-black border-r border-neutral-900 text-white px-7 py-10 flex flex-col justify-between">
 
       <div>
 
@@ -48,6 +49,10 @@ export default function Nav({response}) {
           <button className="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 hover:bg-neutral-950 transition">
             <BarChart3 size={18} />
             Analytics
+          </button>
+          <button className="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 hover:bg-neutral-950 transition">
+            <UserPlus size={18} />
+            Invite
           </button>
 
         </div>
