@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {Link} from "react-router-dom"
+import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -8,18 +8,20 @@ import {
   Settings,
   User,
   LogOut,
-  Globe,
-   UserPlus 
+  UserPlus,
 } from "lucide-react";
 
-export default function Nav({response}) {
+export default function Nav({ response }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const menuClass = ({ isActive }) =>
+    `w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 transition ${
+      isActive ? "bg-neutral-900" : "hover:bg-neutral-950"
+    }`;
 
   return (
     <aside className="w-[280px] h-screen bg-black border-r border-neutral-900 text-white px-7 py-10 flex flex-col justify-between">
-
       <div>
-
         {/* Logo */}
         <h1 className="text-2xl font-serif tracking-wide mb-12">
           Sales Nova
@@ -27,50 +29,48 @@ export default function Nav({response}) {
 
         {/* Main Menu */}
         <div className="space-y-4">
-
           <h2 className="text-xs uppercase tracking-[3px] text-neutral-500">
             Main Menu
           </h2>
 
-          <button className="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 bg-neutral-950 hover:bg-neutral-900 transition">
+          <NavLink to="/workspace" end className={menuClass}>
             <LayoutDashboard size={18} />
             Dashboard
-          </button>
+          </NavLink>
 
-          <button className="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 hover:bg-neutral-950 transition">
+          <NavLink to="/workspace/leads" className={menuClass}>
             <Users size={18} />
             Leads
-          </button>
-          <Link to="/workspace/generate-api" className="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 hover:bg-neutral-950 transition">
+          </NavLink>
+
+          <NavLink to="/workspace/generate-api" className={menuClass}>
             <KeyRound size={18} />
             Your API
-          </Link>
+          </NavLink>
 
-          <button className="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 hover:bg-neutral-950 transition">
+          <NavLink to="/workspace/analytics" className={menuClass}>
             <BarChart3 size={18} />
             Analytics
-          </button>
-          <button className="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 hover:bg-neutral-950 transition">
+          </NavLink>
+
+          <NavLink to="/workspace/invite" className={menuClass}>
             <UserPlus size={18} />
             Invite
-          </button>
-
+          </NavLink>
         </div>
       </div>
 
       {/* Bottom Section */}
       <div className="space-y-4 relative">
-
         {/* Profile */}
         <div className="border border-neutral-900 rounded-xl px-4 py-4 flex items-center gap-4">
-
           <div className="h-11 w-11 rounded-full bg-neutral-900 flex items-center justify-center">
             <User size={18} />
           </div>
 
           <div>
             <h1 className="text-sm font-medium">
-                {response?.user?.username}
+              {response?.user?.username}
             </h1>
 
             <p className="text-xs text-neutral-500">
@@ -81,10 +81,11 @@ export default function Nav({response}) {
 
         {/* Settings */}
         <div className="relative">
-
           <button
             onClick={() => setSettingsOpen(!settingsOpen)}
-            className="w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 hover:bg-neutral-950 transition"
+            className={`w-full flex items-center gap-3 px-5 py-3 rounded-xl border border-neutral-900 transition ${
+              settingsOpen ? "bg-neutral-900" : "hover:bg-neutral-950"
+            }`}
           >
             <Settings size={18} />
             Settings
@@ -92,7 +93,6 @@ export default function Nav({response}) {
 
           {settingsOpen && (
             <div className="absolute bottom-16 left-0 w-full bg-neutral-950 border border-neutral-900 rounded-xl p-2">
-
               <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-900 transition">
                 <User size={16} />
                 Profile
@@ -106,13 +106,10 @@ export default function Nav({response}) {
                 <LogOut size={16} />
                 Logout
               </button>
-
             </div>
           )}
         </div>
-
       </div>
-
     </aside>
   );
 }

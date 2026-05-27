@@ -14,7 +14,6 @@ import {
 
 const GenerateApi = () => {
   const [copied, setCopied] = useState(false);
-
   const queryClient = useQueryClient();
 
   // GET API KEY
@@ -27,18 +26,16 @@ const GenerateApi = () => {
   });
 
   // GENERATE API KEY
-  const mutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.post("/api/generate-api");
-      return response.data;
-    },
+ const mutation = useMutation({
+  mutationFn : async () => {
+    const res = await api.post("/api/generate-api");
+    return res.data
+  },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["apiKey"],
-      });
-    },
-  });
+  onSuccess : () => {
+    queryClient.invalidateQueries({queryKey : ['apiKey']})
+  }
+ })
 
   const apiKey = data?.apiKey || "";
 
