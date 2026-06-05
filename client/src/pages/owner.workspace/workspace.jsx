@@ -8,6 +8,7 @@ import Loading from "../../components/Loading.jsx";
 import Leads from ".././owner.workspace/components/Leads.jsx"
 import InviteUser from "./components/InviteUser.jsx";
 import Analytics from "./components/Analytics.jsx";
+import LeadDetails from "./components/LeadDetails.jsx";
 
 export default function Workspace() {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ export default function Workspace() {
           <Route path="generate-api" element={<GenerateApi response={data} />} />
           <Route path="invite" element={<InviteUser />} />
           <Route path="leads" element={<Leads />} />
+          <Route path="leads/:id" element={<LeadDetails />} />
           <Route path="analytics" element={<Analytics />} />
         </Routes>
       </main>

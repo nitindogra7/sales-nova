@@ -1,6 +1,7 @@
 import { createLeadSchema } from '../schemas/leads.schema.js';
 import { findWorkspaceByUserId } from '../services/workspace.services.js';
 import Leads from '../models/Leads.model.js';
+import mongoose from 'mongoose';
 
 export const createLeadsController = async (req, res) => {
   try {
@@ -68,6 +69,54 @@ export const getLeadsController = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Something broke up!',
+    });
+  }
+};
+
+export const getSingleLeadController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+     if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid lead id",
+      });
+    }
+
+    const workSpace = await findWorkspaceByUserId(userId);
+
+    if (!workSpace) {
+      return res.status(404).json({
+        success: false,
+        message: "No workspace found.",
+      });
+    }
+
+    const lead = await Leads.findOne({
+      _id: id,
+      workspace: workSpace._id,
+    });
+
+    if (!lead) {
+      return res.status(404).json({
+        success: false,
+        message: "Lead not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Lead fetched successfully",
+      lead,
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something broke up!",
     });
   }
 };

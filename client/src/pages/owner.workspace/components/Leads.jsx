@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import api from "../../../apis/Api"; // adjust path according to your folder
 
 import {
@@ -241,7 +242,9 @@ function LeadStat({ title, value }) {
 
 function LeadCard({ lead }) {
   return (
-    <div className="rounded-2xl border border-neutral-900 bg-black p-5 hover:bg-neutral-950 transition">
+    <Link
+    to={`/workspace/leads/${lead._id}`}
+     className="rounded-2xl border border-neutral-900 bg-black p-5 hover:bg-neutral-950 transition">
       <div className="flex items-start justify-between gap-5">
         <div className="flex items-start gap-4">
           <div className="h-11 w-11 rounded-2xl border border-neutral-800 bg-neutral-950 flex items-center justify-center shrink-0">
@@ -286,7 +289,7 @@ function LeadCard({ lead }) {
           <MoreVertical size={16} />
         </button>
       </div>
-    </div>
+    </Link>
   );
 }
 
