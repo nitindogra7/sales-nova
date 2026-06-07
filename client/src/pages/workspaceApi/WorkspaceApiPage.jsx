@@ -14,7 +14,7 @@ export default function WorkspaceApiPage() {
           <div>
             <p className="text-sm text-neutral-500">Workspace API</p>
 
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
               Your API Integration
             </h1>
 
