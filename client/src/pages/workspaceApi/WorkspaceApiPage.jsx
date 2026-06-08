@@ -3,9 +3,11 @@ import ApiKeyCard from "./components/ApiKeyCard";
 import IntegrationSteps from "./components/IntegrationSteps";
 import CodeExamples from "./components/CodeExamples";
 import ApiNotes from "./components/ApiNotes";
+
 import { fetchCode, axiosCode, requestBodyCode } from "./data/apiDocs";
 
 export default function WorkspaceApiPage() {
+
   return (
     <section className="min-h-screen w-full bg-black px-4 py-6 text-white sm:px-6 lg:px-8 lg:py-10">
       <div className="mx-auto w-full max-w-[1120px] space-y-6 lg:space-y-8">
@@ -32,7 +34,7 @@ export default function WorkspaceApiPage() {
           </div>
         </div>
 
-        <ApiKeyCard />
+        <ApiKeyCard  />
 
         <IntegrationSteps />
 
