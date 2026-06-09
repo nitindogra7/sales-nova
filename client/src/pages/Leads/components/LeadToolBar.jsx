@@ -25,7 +25,9 @@ export default function LeadToolbar({
       <div className="flex gap-3">
         <select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
+          onChange={(e) => {
+            setStatusFilter(e.target.value)
+          }}
           className="h-11 rounded-2xl border border-neutral-900 bg-black px-4 text-sm text-neutral-300 outline-none focus:border-neutral-700"
         >
           <option value="all">All Status</option>

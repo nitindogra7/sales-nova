@@ -2,84 +2,55 @@ import { useMemo, useState } from "react";
 import LeadStats from "./components/LeadsStats.jsx";
 import LeadToolbar from "./components/LeadToolBar.jsx";
 import LeadCard from "./components/LeadCard.jsx";
-
-const initialLeads = [
-  {
-    id: 1,
-    name: "Rahul Sharma",
-    email: "rahul@company.com",
-    phone: "+91 98765 43210",
-    company: "TechNova Labs",
-    source: "Website Form",
-    status: "new",
-    priority: "high",
-    message:
-      "Interested in CRM setup for a small sales team. Wants a demo this week.",
-    createdAt: "Today, 10:30 AM",
-    assignedTo: "Nitin",
-  },
-  {
-    id: 2,
-    name: "Ananya Verma",
-    email: "ananya@brandhub.in",
-    phone: "+91 91234 56789",
-    company: "BrandHub",
-    source: "LinkedIn",
-    status: "contacted",
-    priority: "medium",
-    message:
-      "Asked about API integration for collecting leads from landing pages.",
-    createdAt: "Yesterday, 6:15 PM",
-    assignedTo: "Nitin",
-  },
-  {
-    id: 3,
-    name: "Karan Mehta",
-    email: "karan@startupx.io",
-    phone: "+91 99887 77665",
-    company: "StartupX",
-    source: "Cold DM",
-    status: "qualified",
-    priority: "high",
-    message: "Needs lead tracking dashboard and sales pipeline management.",
-    createdAt: "Jun 8, 2026",
-    assignedTo: "Nitin",
-  },
-  {
-    id: 4,
-    name: "Priya Singh",
-    email: "priya@digitalflow.com",
-    phone: "+91 90000 11122",
-    company: "Digital Flow",
-    source: "Referral",
-    status: "proposal",
-    priority: "low",
-    message:
-      "Looking for simple CRM with lead notes, status updates and team access.",
-    createdAt: "Jun 7, 2026",
-    assignedTo: "Nitin",
-  },
-];
+import api from "../../apis/Api.js";
+import { useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 export default function LeadsPage() {
-  const [leads, setLeads] = useState(initialLeads);
+
+   const [searchParams, setSearchParams] = useSearchParams();
+   const page = Number(searchParams.get("page")) || 1;
+   const limit = Number(searchParams.get("limit")) || 10;
+
+  const {data , isLoading , isError , error} = useQuery({
+    queryKey : ["get-leads" , page , limit],
+    queryFn : async() => {
+      const res = await api.get(`/api/leads?page=${page}&limit=${limit}`)
+      console.log(res.data)
+      return res.data
+    }
+  })
+
+  function nextPage(e){
+    e.preventDefault()
+    if(!data.hasNextPage) return
+    setSearchParams({
+      page : String(page + 1) , 
+      limit : String(limit)
+  })
+  }
+
+  function prevPage(e){
+    e.preventDefault()
+    if(!data.hasPrevPage) return
+    setSearchParams({
+      page : String(page - 1),
+      limit : String(limit)
+    })
+  }
+
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const updateLead = (leadId, updates) => {
-    setLeads((prev) =>
-      prev.map((lead) =>
-        lead.id === leadId ? { ...lead, ...updates } : lead
-      )
-    );
-  };
+  const leads = data?.leads || []
+
 
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
       const matchesSearch =
         lead.name.toLowerCase().includes(search.toLowerCase()) ||
         lead.email.toLowerCase().includes(search.toLowerCase()) ||
-        lead.company.toLowerCase().includes(search.toLowerCase());
+        lead.name.toLowerCase().includes(search.toLowerCase());
 
       const matchesStatus =
         statusFilter === "all" || lead.status === statusFilter;
@@ -87,6 +58,39 @@ export default function LeadsPage() {
       return matchesSearch && matchesStatus;
     });
   }, [leads, search, statusFilter]);
+
+  if (isLoading) {
+  return (
+    <section className="min-h-screen bg-black px-4 py-5 text-white sm:px-6 lg:px-8 lg:py-8">
+      <div className="mx-auto flex min-h-[70vh] w-full max-w-[1350px] items-center justify-center">
+        <div className="rounded-3xl border border-neutral-900 bg-neutral-950/40 px-8 py-6 text-center">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-neutral-700 border-t-white"></div>
+          <p className="text-sm text-neutral-400">Loading leads...</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+if (isError) {
+  return (
+    <section className="min-h-screen bg-black px-4 py-5 text-white sm:px-6 lg:px-8 lg:py-8">
+      <div className="mx-auto flex min-h-[70vh] w-full max-w-[1350px] items-center justify-center">
+        <div className="max-w-md rounded-3xl border border-red-900/50 bg-red-950/20 px-8 py-6 text-center">
+          <h2 className="text-lg font-semibold text-red-400">
+            Failed to load leads
+          </h2>
+
+          <p className="mt-2 text-sm text-red-300/80">
+            {error?.response?.data?.message ||
+              error?.message ||
+              "Something went wrong"}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
 
   return (
     <section className="min-h-screen bg-black px-4 py-5 text-white sm:px-6 lg:px-8 lg:py-8">
@@ -111,7 +115,7 @@ export default function LeadsPage() {
           </button>
         </div>
 
-        <LeadStats leads={leads} />
+        <LeadStats leads={leads} data = {data} />
 
         <LeadToolbar
           search={search}
@@ -134,9 +138,8 @@ export default function LeadsPage() {
           <div className="space-y-3">
             {filteredLeads.map((lead) => (
               <LeadCard
-                key={lead.id}
+                key={lead._id}
                 lead={lead}
-                onUpdate={updateLead}
               />
             ))}
 
@@ -148,6 +151,29 @@ export default function LeadsPage() {
           </div>
         </div>
       </div>
+      <div className="mt-5 flex flex-col gap-3 border-t border-neutral-900 pt-4 sm:flex-row sm:items-center sm:justify-between">
+  <p className="text-xs text-neutral-500">
+    Page {""} of {""} • Total {""} leads
+  </p>
+
+  <div className="flex items-center gap-2">
+    <button
+    onClick={prevPage}
+    disabled={!data?.hasPrevPage}
+      className="rounded-xl border border-neutral-800 px-4 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      Prev
+    </button>
+
+    <button
+    onClick={nextPage}
+    disabled={!data?.hasNextPage}
+      className="rounded-xl border border-neutral-800 px-4 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      Next
+    </button>
+  </div>
+</div>
     </section>
   );
 }

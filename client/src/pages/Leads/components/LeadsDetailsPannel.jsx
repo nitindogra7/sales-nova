@@ -16,6 +16,8 @@ export default function LeadDetailsPanel({ lead, onUpdate }) {
     );
   }
 
+  const leadCreatedAt = lead.createdAt
+
   return (
     <aside className="h-fit rounded-3xl border border-neutral-900 bg-neutral-950/40 p-5 xl:sticky xl:top-6">
       <div className="flex items-start gap-4">
@@ -75,7 +77,7 @@ export default function LeadDetailsPanel({ lead, onUpdate }) {
         <InfoRow icon={Phone} label="Phone" value={lead.phone} />
         <InfoRow icon={Building2} label="Company" value={lead.company} />
         <InfoRow icon={User} label="Assigned To" value={lead.assignedTo} />
-        <InfoRow icon={Calendar} label="Created" value={lead.createdAt} />
+        <InfoRow icon={Calendar} label="Created" value={leadCreatedAt} />
       </div>
 
       {/* Message */}

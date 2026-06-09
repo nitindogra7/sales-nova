@@ -1,10 +1,10 @@
 import { BadgeCheck, Inbox, Trophy, Users } from "lucide-react";
 
-export default function LeadStats({ leads }) {
+export default function LeadStats({ leads , data }) {
   const stats = [
     {
       label: "Total Leads",
-      value: leads.length,
+      value: data.total,
       icon: Users,
     },
     {

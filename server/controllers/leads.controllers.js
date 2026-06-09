@@ -43,10 +43,13 @@ export const createLeadsController = async (req, res) => {
 export const getLeadsController = async (req, res) => {
   try {
     const id = req.user.id;
+    const page = Math.max(Number(req.query.page || 1), 1);
+    const limit = Math.max(Number(req.query.limit || 10), 20);
+    const skip = (page - 1) * limit;
 
-    const workSpace = await findWorkspaceByUserId(id);
+    const workspace = await findWorkspaceByUserId(id);
 
-    if (!workSpace) {
+    if (!workspace) {
       return res.status(404).json({
         success: false,
         message: 'No workspace found.',
@@ -54,14 +57,27 @@ export const getLeadsController = async (req, res) => {
     }
 
     const leads = await Leads.find({
-      workspace: workSpace._id,
-    }).sort({ createdAt: -1 });
+      workspace: workspace._id,
+    })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
+    const totalLeads = await Leads.countDocuments({ workspace: workspace._id });
+    const totalPages = Math.ceil(totalLeads / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
     return res.status(200).json({
       success: true,
       message: 'Leads fetched successfully',
-      total: leads.length,
+      total: totalLeads,
       leads,
+      currentPageLeads: leads.length,
+      page,
+      limit,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
     });
   } catch (err) {
     console.error(err);
@@ -78,10 +94,10 @@ export const getSingleLeadController = async (req, res) => {
     const userId = req.user.id;
     const { id } = req.params;
 
-     if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid lead id",
+        message: 'Invalid lead id',
       });
     }
 
@@ -90,7 +106,7 @@ export const getSingleLeadController = async (req, res) => {
     if (!workSpace) {
       return res.status(404).json({
         success: false,
-        message: "No workspace found.",
+        message: 'No workspace found.',
       });
     }
 
@@ -102,13 +118,13 @@ export const getSingleLeadController = async (req, res) => {
     if (!lead) {
       return res.status(404).json({
         success: false,
-        message: "Lead not found",
+        message: 'Lead not found',
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "Lead fetched successfully",
+      message: 'Lead fetched successfully',
       lead,
     });
   } catch (err) {
@@ -116,7 +132,7 @@ export const getSingleLeadController = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Something broke up!",
+      message: 'Something broke up!',
     });
   }
 };
