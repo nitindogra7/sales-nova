@@ -1,13 +1,12 @@
 import { useState } from "react";
-import api from "../../apis/Api";
+import api from "../../apis/Api.js";
 import Nav from "./components/Nav.jsx";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Menu, X } from "lucide-react";
-
-import Dashboard from "../ownerDashboard/Dashboard.jsx";
-import LeadsPage from "../Leads/LeadsPage.jsx";
-import WorkspaceApiPage from "../workspaceApi/WorkspaceApiPage.jsx";
+import Dashboard from "./../ownerDashboard/Dashboard.jsx";
+import LeadsPage from "./../Leads/LeadsPage.jsx";
+import WorkspaceApiPage from "./../generate-api-Page/workspaceApi/WorkspaceApiPage.jsx";
 
 export default function Workspace() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -1,9 +1,9 @@
-import Signup from "./pages/signup";
-import Login from "./pages/login";
+import Signup from "./pages/auth-pages/signup";
+import Login from "./pages/auth-pages/login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Route , Routes } from "react-router-dom";
 import OTPVerification from "./components/OtpComponent";
-import Workspace from "./pages/owner.workspace/workspace";
+import Workspace from "./pages/workspace/workspace.jsx";
 export default function App() {
   return (
     <div className="">

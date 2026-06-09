@@ -1,6 +1,6 @@
 import { KeyRound, Copy, RefreshCw } from "lucide-react";
 import { useQueryClient , useMutation , useQuery} from "@tanstack/react-query";
-import api from "../../../apis/Api";
+import api from "../../../../apis/Api.js";
 import { useState } from "react";
 
 export default function ApiKeyCard() {

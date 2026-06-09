@@ -1,4 +1,4 @@
-import AuthContainer from "../components/authContainer";
+import AuthContainer from "../../components/authContainer";
 
 export default function Login() {
   return (

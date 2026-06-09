@@ -1,7 +1,7 @@
-import signupImage from "../assets/signupImg.png";
-import AuthContainer from "../components/authContainer";
+import signupImage from "../../assets/signupImg.png";
+import AuthContainer from "../../components/authContainer.jsx";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../apis/auth.apis.js";
+import { signup } from "../../apis/auth.apis.js";
 import { useMutation } from "@tanstack/react-query";
 
 export default function Signup() {
