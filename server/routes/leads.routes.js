@@ -3,6 +3,8 @@ import {
   createLeadsController,
   getLeadsController,
   getSingleLeadController,
+  updateLeadController,
+  deleteLeadController,
 } from '../controllers/leads.controllers.js';
 
 import authMiddleware from '../middlewares/auth.middleware.js';
@@ -20,6 +22,20 @@ router.get(
   authMiddleware,
   allowRoles('owner'),
   getSingleLeadController
+);
+
+router.patch(
+  '/leads/:id',
+  authMiddleware,
+  allowRoles('owner'),
+  updateLeadController
+);
+
+router.delete(
+  '/leads/:id',
+  authMiddleware,
+  allowRoles('owner'),
+  deleteLeadController
 );
 
 export default router;

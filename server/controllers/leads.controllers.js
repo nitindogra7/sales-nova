@@ -1,6 +1,7 @@
 import { createLeadSchema } from '../schemas/leads.schema.js';
 import { findWorkspaceByUserId } from '../services/workspace.services.js';
 import Leads from '../models/Leads.model.js';
+import { updateLeadSchema } from '../schemas/updateLeadSchema.js';
 import mongoose from 'mongoose';
 
 export const createLeadsController = async (req, res) => {
@@ -44,7 +45,7 @@ export const getLeadsController = async (req, res) => {
   try {
     const id = req.user.id;
     const page = Math.max(Number(req.query.page || 1), 1);
-    const limit = Math.max(Number(req.query.limit || 10), 20);
+    const limit = Math.max(Number(req.query.limit || 10), 1);
     const skip = (page - 1) * limit;
 
     const workspace = await findWorkspaceByUserId(id);
@@ -130,6 +131,115 @@ export const getSingleLeadController = async (req, res) => {
   } catch (err) {
     console.error(err);
 
+    return res.status(500).json({
+      success: false,
+      message: 'Something broke up!',
+    });
+  }
+};
+
+export const updateLeadController = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid lead id",
+      });
+    }
+
+    const workspace = await findWorkspaceByUserId(req.user.id);
+
+    if (!workspace) {
+      return res.status(404).json({
+        success: false,
+        message: "Workspace not found",
+      });
+    }
+
+    const result = updateLeadSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error.issues.map(i => i.message),
+      });
+    }
+
+    const lead = await Leads.findOneAndUpdate(
+      {
+        _id: id,
+        workspace: workspace._id,
+      },
+      result.data,
+      {
+        new: true,
+      }
+    );
+
+    if (!lead) {
+      return res.status(404).json({
+        success: false,
+        message: "Lead not found",
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Lead updated",
+      lead,
+    });
+
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Something broke",
+    });
+  }
+};
+
+
+export const deleteLeadController = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid lead id',
+      });
+    }
+
+    const workspace = await findWorkspaceByUserId(req.user.id);
+
+    if (!workspace) {
+      return res.status(404).json({
+        success: false,
+        message: 'Workspace not found',
+      });
+    }
+
+    const lead = await Leads.findOneAndDelete({
+      _id: id,
+      workspace: workspace._id,
+    });
+
+    if (!lead) {
+      return res.status(404).json({
+        success: false,
+        message: 'Lead not found',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Lead deleted successfully',
+    });
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({
       success: false,
       message: 'Something broke up!',

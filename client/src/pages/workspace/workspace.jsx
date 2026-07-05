@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Menu, X } from "lucide-react";
 import Dashboard from "./../ownerDashboard/Dashboard.jsx";
 import LeadsPage from "./../Leads/LeadsPage.jsx";
+import LeadDetail from "../Leads/LeadsDetail.jsx";
 import WorkspaceApiPage from "./../generate-api-Page/workspaceApi/WorkspaceApiPage.jsx";
 
 export default function Workspace() {
@@ -75,11 +76,12 @@ export default function Workspace() {
 
       {/* Main Content */}
       <main className="min-h-screen w-full bg-black pt-16 lg:ml-[280px] lg:w-[calc(100%-280px)] lg:pt-0">
-        <Routes>
-          <Route index element={<Dashboard />} />
-          <Route path="leads" element={<LeadsPage />} />
-          <Route path="generate-api" element={<WorkspaceApiPage />} />
-        </Routes>
+      <Routes>
+  <Route index element={<Dashboard />} />
+  <Route path="leads" element={<LeadsPage />} />
+  <Route path="leads/:id" element={<LeadDetail />} />
+  <Route path="generate-api" element={<WorkspaceApiPage />} />
+</Routes>
       </main>
     </div>
   );
